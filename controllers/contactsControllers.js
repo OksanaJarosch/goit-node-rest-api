@@ -1,5 +1,6 @@
 const contactsService = require("../services/contactsServices.js");
 //{ listContacts, getContactById, removeContact, addContact };
+const ctrlWrapper = require("../helpers/ctrlWrapper.js")
 
 const getAllContacts = (req, res) => {};
 
@@ -11,4 +12,10 @@ const createContact = (req, res) => {};
 
 const updateContact = (req, res) => { };
 
-module.exports = { getAllContacts, getOneContact, deleteContact, createContact, updateContact };
+module.exports = {
+    getAllContacts: ctrlWrapper(getAllContacts),
+    getOneContact: ctrlWrapper(getOneContact),
+    deleteContact: ctrlWrapper(deleteContact),
+    createContact: ctrlWrapper(createContact),
+    updateContact: ctrlWrapper(updateContact)
+};
