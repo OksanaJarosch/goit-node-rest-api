@@ -1,14 +1,39 @@
 const contactsService = require("../services/contactsServices.js");
-//{ listContacts, getContactById, removeContact, addContact };
+const HttpError = require("../helpers/HttpError.js");
+
 const ctrlWrapper = require("../helpers/ctrlWrapper.js")
 
-const getAllContacts = (req, res) => {};
+const getAllContacts = async ( _, res) => {
+    const result = await contactsService.listContacts();
+    res.json(result);
+};
 
-const getOneContact = (req, res) => {};
+const getOneContact = async (req, res) => {
+    const { id } = req.params;
+    const result = await contactsService.getContactById(id);
+        if (!result) {
+            throw HttpError(404);
+    }
+    res.json(result);
+};
 
-const deleteContact = (req, res) => {};
+const deleteContact = async (req, res) => {
+    const { id } = req.params;
+    const result = await contactsService.removeContact(id);
+        if (!result) {
+            throw HttpError(404);
+    }
+    res.json(result);
+};
 
-const createContact = (req, res) => {};
+const createContact = async (req, res) => {
+    const { name, email, phone } = req.body;
+        const result = await contactsService.addContact(name, email, phone);
+        if (!result) {
+            throw HttpError(404);
+    }
+    res.status(201).json(result);
+};
 
 const updateContact = (req, res) => { };
 
