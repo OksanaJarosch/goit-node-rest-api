@@ -5,7 +5,7 @@ const {  getAllContacts,
   createContact,
   updateContact
 } = require("../controllers/contactsControllers.js");
-const validateBody = require("../helpers/validateBody.js");
+const {validateBody} = require("../helpers");
 const { createContactSchema, updateContactSchema } = require("../schemas/contactsSchemas.js");
 
 const contactsRouter = express.Router();
