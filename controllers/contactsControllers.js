@@ -35,7 +35,19 @@ const createContact = async (req, res) => {
     res.status(201).json(result);
 };
 
-const updateContact = (req, res) => { };
+const updateContact = async (req, res) => { 
+    const { id } = req.params;
+    const { name, email, phone } = req.body;
+    if (!(name || email || phone)) {
+        throw HttpError(400, "Body must have at least one field");
+    }
+    
+    const result = await contactsService.updateContact(id, req.body);
+        if (!result) {
+            throw HttpError(404);
+    }
+    res.status(200).json(result);
+};
 
 module.exports = {
     getAllContacts: ctrlWrapper(getAllContacts),

@@ -39,4 +39,19 @@ async function addContact(name, email, phone) {
     return newContact;
 }
 
-module.exports = { listContacts, getContactById, removeContact, addContact };
+async function updateContact (contactId, bodyData) {
+    const contacts = await listContacts();
+
+    const indexToUpdate = contacts.findIndex(cont => cont.id ===contactId);
+    if (indexToUpdate === -1) {
+        return null;
+    }
+
+    contacts[indexToUpdate] = { ...contacts[indexToUpdate], ...bodyData };
+
+    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+
+    return contacts[indexToUpdate];
+}
+
+module.exports = { listContacts, getContactById, removeContact, addContact, updateContact };

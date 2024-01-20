@@ -7,7 +7,9 @@ const createContactSchema = Joi.object({
 })
 
 const updateContactSchema = Joi.object({
-
+    name: Joi.string(),
+    email: Joi.string().email({ minDomainSegments: 2}),
+    phone: Joi.string().pattern(/\d/).min(1)
 })
 
 module.exports = { createContactSchema, updateContactSchema };
