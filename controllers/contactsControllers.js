@@ -1,16 +1,16 @@
 const contactsService = require("../services/contactsServices.js");
 const {HttpError} = require("../helpers");
-
+const Contact = require("../models/contact.js")
 const { ctrlWrapper } = require("../helpers");
 
 const getAllContacts = async ( _, res) => {
-    const result = await contactsService.listContacts();
+    const result = await Contact.find();
     res.json(result);
 };
 
 const getOneContact = async (req, res) => {
     const { id } = req.params;
-    const result = await contactsService.getContactById(id);
+    const result = await Contact.findById(id);
         if (!result) {
             throw HttpError(404);
     }
