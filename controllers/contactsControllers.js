@@ -1,4 +1,3 @@
-const contactsService = require("../services/contactsServices.js");
 const {HttpError} = require("../helpers");
 const Contact = require("../models/contact.js")
 const { ctrlWrapper } = require("../helpers");
