@@ -3,7 +3,8 @@ const {  getAllContacts,
   getOneContact,
   deleteContact,
   createContact,
-  updateContact
+  updateContact,
+  updateStatusContact
 } = require("../controllers/contactsControllers.js");
 const {validateBody} = require("../helpers");
 const { createContactSchema, updateContactSchema, updateFavoriteSchema } = require("../schemas/contactsSchemas.js");
@@ -20,7 +21,7 @@ contactsRouter.post("/", validateBody(createContactSchema), createContact);
 
 contactsRouter.put("/:id", validateBody(updateContactSchema), updateContact);
 
-contactsRouter.patch("/:id/favorite", validateBody(updateFavoriteSchema), updateContact);
+contactsRouter.patch("/:id/favorite", validateBody(updateFavoriteSchema), updateStatusContact);
 
 
 module.exports = contactsRouter;
