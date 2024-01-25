@@ -4,7 +4,7 @@ const createContactSchema = Joi.object({
     name: Joi.string().required(),
     email: Joi.string().email({ minDomainSegments: 2 }).required(),
     phone: Joi.string().pattern(/\d/).min(1).required(),
-    favorite: Joi.boolean().required()
+    favorite: Joi.boolean()
 });
 
 
@@ -18,4 +18,9 @@ const updateContactSchema = Joi
     .min(1)
     .message("Body must have at least one field");
 
-module.exports = { createContactSchema, updateContactSchema };
+    
+const updateFavoriteSchema = Joi.object({
+    favorite: Joi.boolean().required()
+});
+
+module.exports = { createContactSchema, updateContactSchema, updateFavoriteSchema };
