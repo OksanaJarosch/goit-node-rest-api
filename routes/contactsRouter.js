@@ -8,9 +8,13 @@ const {  getAllContacts,
 } = require("../controllers/contactsControllers.js");
 const {validateBody} = require("../helpers");
 const { createContactSchema, updateContactSchema, updateFavoriteSchema } = require("../schemas/contactsSchemas.js");
-const {isValidId} = require("../helpers");
+const { isValidId } = require("../middlewares");
+const { authenticate } = require("../middlewares");
+
 
 const contactsRouter = express.Router();
+
+contactsRouter.use(authenticate);
 
 contactsRouter.get("/", getAllContacts);
 
@@ -22,7 +26,7 @@ contactsRouter.post("/", validateBody(createContactSchema), createContact);
 
 contactsRouter.put("/:id", isValidId, validateBody(updateContactSchema), updateContact);
 
-contactsRouter.patch("/:id/favorite", isValidId, validateBody(updateFavoriteSchema), updateStatusContact);
+contactsRouter.patch("/:id/favor  ite", isValidId, validateBody(updateFavoriteSchema), updateStatusContact);
 
 
 module.exports = contactsRouter;
