@@ -2,6 +2,9 @@ const {HttpError} = require("../helpers");
 const { ctrlWrapper } = require("../helpers");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { SECRET_KEY } = require("../config");
+
 
 const register = async (req, res) => {
     try {
@@ -34,16 +37,21 @@ const login = async (req, res) => {
     const comparePassword = await bcrypt.compare(password, user.password);
     if (!comparePassword) {
         throw HttpError(401, "Email or password is wrong");
-    }
+    };
+
+    payload = {
+        id: user._id
+    };
+
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "24h"});
 
     res.status(200).json({
-        token: "exampletoken",
+        token,
         user: {
             email: user.email,
             subscription: user.subscription
         }
     });
-
 };
 
 module.exports = {
