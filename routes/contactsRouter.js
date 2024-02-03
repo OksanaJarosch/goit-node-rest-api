@@ -6,7 +6,7 @@ const {  getAllContacts,
   updateContact,
   updateStatusContact
 } = require("../controllers/contactsControllers.js");
-const {validateBody} = require("../helpers");
+const {validateBody} = require("../middlewares");
 const { createContactSchema, updateContactSchema, updateFavoriteSchema } = require("../schemas/contactsSchemas.js");
 const { isValidId } = require("../middlewares");
 const { authenticate } = require("../middlewares");

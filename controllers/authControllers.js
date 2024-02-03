@@ -57,8 +57,8 @@ const login = async (req, res) => {
 };
 
 const getCurrent = async (req, res) => {
-    const { email } = req.user;
-    res.json({ email });
+    const { email, subscription } = req.user;
+    res.json({ email, subscription });
 };
 
 const logout = async (req, res) => {
@@ -67,10 +67,20 @@ const logout = async (req, res) => {
     res.status(204).json({ message: "No Content" });
 };
 
+const updateSubscription = async (req, res) => {
+    const { id } = req.params;
+    const result = await User.findByIdAndUpdate(id, req.body, {new: true});
+        if (!result) {
+        throw HttpError(404);
+    }
+    res.status(200).json(result);
+}
+
 
 module.exports = {
     register: ctrlWrapper(register),
     login: ctrlWrapper(login),
     getCurrent: ctrlWrapper(getCurrent),
-    logout: ctrlWrapper(logout)
+    logout: ctrlWrapper(logout),
+    updateSubscription: ctrlWrapper(updateSubscription)
 };
