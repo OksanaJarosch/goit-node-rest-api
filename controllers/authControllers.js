@@ -7,6 +7,7 @@ const { SECRET_KEY } = require("../config");
 var gravatar = require('gravatar');
 const fs = require("fs/promises");
 const path = require("path");
+const Jimp = require("jimp");
 
 
 const register = async (req, res) => {
@@ -87,8 +88,15 @@ const updateAvatar = async (req, res) => {
     const oldPath = path.resolve("tmp", filename)
     const newPath = path.resolve("public", "avatars", filename);
 
+    //Resizing
+    const avatar = await Jimp.read(oldPath);
+    if (!avatar) {
+        throw HttpError(400, "Upload Error");
+    }
+    await avatar.resize(250, 250).write(oldPath);
+    
+    //Relocate to public/avatars
     await fs.rename(oldPath, newPath);
-
     const poster = path.join("public", "avatars", filename);
     const result = await User.findByIdAndUpdate(_id, { avatarURL: poster}, { new: true });
     if (!result) {

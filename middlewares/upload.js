@@ -1,12 +1,14 @@
 const multer = require("multer");
 const path = require("path");
+const Jimp = require("jimp");
 
 
 const storage = multer.diskStorage({
     destination: path.resolve("tmp"),
-    filename: (req, file, cb) => {
-        const preffix = `${Date.now()}_${Math.round(Math.random() * 10)}`;
-        const uniqueName = `${preffix}_${file.originalname}`;
+    filename: async (req, file, cb) => {
+        const { _id } = req.user;
+        const preffix = `${Date.now()}`;
+        const uniqueName = `${_id}_${preffix}_${file.originalname}`;
         cb(null, uniqueName);
     }
 }); 
