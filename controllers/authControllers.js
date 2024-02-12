@@ -4,19 +4,25 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { SECRET_KEY } = require("../config");
+var gravatar = require('gravatar');
+const fs = require("fs/promises");
+const path = require("path");
+const Jimp = require("jimp");
 
 
 const register = async (req, res) => {
     try {
-        const { password } = req.body;
+        const { password, email } = req.body;
         const hashPassword = await bcrypt.hash(password, 10);
+        const avatarURL = gravatar.url(email);
 
-        const newUser = await User.create({ ...req.body, password: hashPassword });
+        const newUser = await User.create({ ...req.body, avatarURL, password: hashPassword });
         
         res.status(201).json({
             user: {
                 email: newUser.email,
-                subscription: newUser.subscription
+                subscription: newUser.subscription,
+                avatarURL: newUser.avatarURL 
             }
         })
     } catch (error) {
@@ -69,11 +75,36 @@ const logout = async (req, res) => {
 
 const updateSubscription = async (req, res) => {
     const { id } = req.params;
-    const result = await User.findByIdAndUpdate(id, req.body, {new: true});
-        if (!result) {
+    const result = await User.findByIdAndUpdate(id, req.body, { new: true });
+    if (!result) {
         throw HttpError(404);
     }
     res.status(200).json(result);
+};
+
+const updateAvatar = async (req, res) => {
+    const { _id } = req.user;
+    const { filename } = req.file;
+    const oldPath = path.resolve("tmp", filename)
+    const newPath = path.resolve("public", "avatars", filename);
+
+    //Resizing
+    const avatar = await Jimp.read(oldPath);
+    if (!avatar) {
+        throw HttpError(400, "Upload Error");
+    }
+    await avatar.resize(250, 250).write(oldPath);
+    
+    //Relocate to public/avatars
+    await fs.rename(oldPath, newPath);
+    const poster = path.join("public", "avatars", filename);
+    const result = await User.findByIdAndUpdate(_id, { avatarURL: poster}, { new: true });
+    if (!result) {
+        throw HttpError(404);
+    }
+    res.status(200).json({
+        avatarURL: result.avatarURL
+    });
 }
 
 
@@ -82,5 +113,6 @@ module.exports = {
     login: ctrlWrapper(login),
     getCurrent: ctrlWrapper(getCurrent),
     logout: ctrlWrapper(logout),
-    updateSubscription: ctrlWrapper(updateSubscription)
+    updateSubscription: ctrlWrapper(updateSubscription),
+    updateAvatar: ctrlWrapper(updateAvatar)
 };
