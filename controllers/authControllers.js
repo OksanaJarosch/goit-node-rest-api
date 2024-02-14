@@ -125,14 +125,42 @@ const updateAvatar = async (req, res) => {
 const verification = async (req, res) => {
     const { verificationToken } = req.params;
 
-    const user = await User.findOne({verificationToken});
+    const user = await User.findOne({ verificationToken });
     if (!user) {
         throw HttpError(401, "Email not found");
     };
-    await User.findByIdAndUpdate(user._id, {verify: true, verificationToken: ""});
+    await User.findByIdAndUpdate(user._id, { verify: true, verificationToken: "" });
 
     res.status(200).json({ message: 'Verification successful' });
-}
+};
+
+const resendVerification = async (req, res) => {
+    const { email } = req.body;
+
+    const user = await User.findOne({email});
+    if (!user) {
+        throw HttpError(400, "Missing required field email")
+    };
+    if (user.verify) {
+        throw HttpError(400, "Verification has already been passed")
+    };
+
+    const verificationToken = uuidv4();
+
+    await User.findByIdAndUpdate(user._id, { verificationToken });
+
+    const verifyEmail = {
+        to: email,
+        subject: "Verification",
+        html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${verificationToken}">Click to verify your email<a>`
+    };
+
+    await sendEmail(verifyEmail);
+
+    res.status(200).json({
+        "message": "Verification email sent"
+    });
+};
 
 
 module.exports = {
@@ -142,5 +170,6 @@ module.exports = {
     logout: ctrlWrapper(logout),
     updateSubscription: ctrlWrapper(updateSubscription),
     updateAvatar: ctrlWrapper(updateAvatar),
-    verification: ctrlWrapper(verification)
+    verification: ctrlWrapper(verification),
+    resendVerification: ctrlWrapper(resendVerification)
 };
