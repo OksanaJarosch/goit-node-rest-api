@@ -1,5 +1,4 @@
-const {HttpError} = require("../helpers");
-const { ctrlWrapper } = require("../helpers");
+const {HttpError, ctrlWrapper, sendEmail} = require("../helpers");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -98,13 +97,25 @@ const updateAvatar = async (req, res) => {
     //Relocate to public/avatars
     await fs.rename(oldPath, newPath);
     const poster = path.join("public", "avatars", filename);
-    const result = await User.findByIdAndUpdate(_id, { avatarURL: poster}, { new: true });
+    const result = await User.findByIdAndUpdate(_id, { avatarURL: poster }, { new: true });
     if (!result) {
         throw HttpError(404);
     }
     res.status(200).json({
         avatarURL: result.avatarURL
     });
+};
+
+const verification = async (req, res) => {
+    const { verificationToken } = req.params;
+
+    const user = await User.findOne(verificationToken);
+    if (!user) {
+        throw HttpError(404);
+    };
+    await User.findByIdAndUpdate(user._id, verify = true, verificationToken = "");
+
+    res.status(200).json({ message: 'Verification successful' });
 }
 
 
@@ -114,5 +125,6 @@ module.exports = {
     getCurrent: ctrlWrapper(getCurrent),
     logout: ctrlWrapper(logout),
     updateSubscription: ctrlWrapper(updateSubscription),
-    updateAvatar: ctrlWrapper(updateAvatar)
+    updateAvatar: ctrlWrapper(updateAvatar),
+    verification: ctrlWrapper(verification)
 };

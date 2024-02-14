@@ -1,8 +1,8 @@
 const sgMail = require("@sendgrid/mail");
-const {API_KEY} = require("../config");
+const {SG_API_KEY} = require("../config");
 
 
-sgMail.setApiKey(API_KEY);
+sgMail.setApiKey(SG_API_KEY);
 
 const sendEmail = async (data) => {
     const email = { ...data, from: "ok.jarosch@gmail.com" };
